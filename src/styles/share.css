@@ -1,0 +1,226 @@
+/* ShareBar / ExportCard 样式。
+   颜色只允许来自两处：styles.css 里的既有令牌，或本文件声明的 --share-* 新令牌。
+   T4 的深色主题通过重定义既有令牌生效，所以这里不得出现任何颜色字面量。 */
+
+.share-bar {
+  --share-radius: 18px;
+  --share-gap: 12px;
+  --share-btn-bg: var(--bg);
+  --share-btn-bg-hover: var(--accent-soft);
+  --share-focus-ring: var(--accent);
+
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--share-radius);
+  padding: 20px 22px 22px;
+  margin-top: 16px;
+}
+
+.share-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.share-head h3 {
+  font-size: 12.5px;
+  letter-spacing: 2px;
+  color: var(--ink3);
+  font-weight: 600;
+}
+
+.share-hint {
+  font-size: 12px;
+  color: var(--ink3);
+}
+
+.share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.share-btn {
+  border: 1px solid var(--line);
+  background: var(--share-btn-bg);
+  color: var(--ink2);
+  border-radius: 99px;
+  padding: 7px 15px;
+  font-size: 13px;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+
+.share-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--share-btn-bg-hover);
+}
+
+.share-btn:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.share-btn:focus-visible {
+  outline: 2px solid var(--share-focus-ring);
+  outline-offset: 2px;
+}
+
+.share-status {
+  margin: 10px 0 0;
+  min-height: 20px;
+  font-size: 12.5px;
+  color: var(--ink2);
+}
+
+.share-status.is-ok { color: var(--ok); }
+.share-status.is-error { color: var(--warn); }
+
+/* ---------- 造型夹 ---------- */
+
+.share-looks {
+  margin-top: 16px;
+  border-top: 1px dashed var(--line);
+  padding-top: 14px;
+}
+
+.share-looks-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12.5px;
+  letter-spacing: 1px;
+  color: var(--ink3);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.share-looks-count {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.share-looks-empty {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink3);
+  line-height: 1.7;
+}
+
+.share-looks-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.share-look {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1.5px solid var(--line);
+  border-radius: 13px;
+  background: var(--card);
+  padding: 8px 10px;
+  transition: border-color .13s;
+}
+
+.share-look:hover { border-color: var(--ink3); }
+
+.share-look-sw {
+  width: 26px;
+  height: 26px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  flex: none;
+}
+
+.share-look-apply {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  padding: 4px 0;
+  cursor: pointer;
+  font-size: 13.5px;
+}
+
+.share-look-apply:hover:not(:disabled) .share-look-name { color: var(--accent); }
+
+.share-look-apply:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.share-look-apply:focus-visible {
+  outline: 2px solid var(--share-focus-ring);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.share-look-name { font-weight: 600; }
+.share-look-time,
+.share-look-meta { font-size: 11.5px; color: var(--ink3); }
+
+.share-look-del {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink3);
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  flex: none;
+}
+
+.share-look-del:hover {
+  color: var(--warn);
+  border-color: var(--warn);
+}
+
+.share-look-del:focus-visible {
+  outline: 2px solid var(--share-focus-ring);
+  outline-offset: 2px;
+}
+
+/* ---------- 造型卡导出 ---------- */
+
+.share-export {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.share-export-status {
+  font-size: 12px;
+  color: var(--ink2);
+}
+
+.share-export-status.is-ok { color: var(--ok); }
+.share-export-status.is-error { color: var(--warn); }
+
+@media (prefers-reduced-motion: reduce) {
+  .share-btn,
+  .share-look { transition: none; }
+}
+
+@media (max-width: 640px) {
+  .share-bar { padding: 16px; }
+  .share-look-apply { font-size: 13px; }
+}

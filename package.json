@@ -1,0 +1,82 @@
+{
+  "name": "menstyle-lab",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "validate": "node scripts/validate.mjs",
+    "test:engine": "node scripts/test-engine.mjs",
+    "test:wardrobe": "node scripts/test-wardrobe.mjs",
+    "test:preferences": "node scripts/test-preferences.mjs",
+    "test:backup": "node scripts/test-backup.mjs",
+    "test:backup2": "node scripts/test-backup-v2.mjs",
+    "test:daily": "node scripts/test-daily.mjs",
+    "test:calendar": "node scripts/test-calendar.mjs",
+    "test:capsule": "node scripts/test-capsule.mjs",
+    "test:bodyprofile": "node scripts/test-bodyprofile.mjs",
+    "test:collage": "node scripts/test-collage.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:desktop": "playwright test --project=desktop",
+    "test:e2e:mobile": "playwright test --project=mobile",
+    "test:e2e:coverage": "node scripts/e2e-coverage.mjs",
+    "coverage:ui": "node scripts/ui-coverage.mjs coverage-e2e/raw.json --min-lines=60",
+    "coverage:ui:self-test": "node scripts/ui-coverage.mjs --self-test",
+    "font:build": "python scripts/build-font-subset.py",
+    "font:check": "python scripts/build-font-subset.py --check-only",
+    "test:looks": "node scripts/test-looks.mjs",
+    "test:outfitshape": "node scripts/test-outfitshape.mjs",
+    "test:share": "node scripts/test-share.mjs",
+    "test:sources": "node scripts/test-sources.mjs",
+    "test:freshness": "node scripts/test-sources.mjs --freshness-only",
+    "lint": "node scripts/lint.mjs",
+    "lint:self-test": "node scripts/lint.mjs --self-test",
+    "coverage": "node scripts/coverage.mjs --min-lines=50 --max-never-loaded=40",
+    "coverage:self-test": "node scripts/coverage.mjs --self-test",
+    "hooks:install": "node scripts/install-hooks.mjs",
+    "hooks:uninstall": "node scripts/install-hooks.mjs --uninstall",
+    "test": "npm run lint && npm run lint:self-test && npm run coverage:ui:self-test && npm run check:bundle:self-test && npm run validate && npm run test:engine && npm run test:wardrobe && npm run test:preferences && npm run test:backup && npm run test:backup2 && npm run test:daily && npm run test:calendar && npm run test:capsule && npm run test:bodyprofile && npm run test:looks && npm run test:outfitshape && npm run test:share && npm run test:sources && npm run test:collage",
+    "check:bundle": "node scripts/check-bundle.mjs",
+    "check:bundle:self-test": "node scripts/check-bundle.mjs --self-test",
+    "docs": "node scripts/generate-docs.mjs",
+    "check:links": "node scripts/check-links.mjs",
+    "prebuild": "npm test && npm run docs",
+    "prebuild:single": "npm test && npm run docs",
+    "build": "vite build",
+    "build:single": "vite build --mode single",
+    "build:release": "npm run build:single && node scripts/release.mjs",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@react-three/drei": "^9.114.3",
+    "@react-three/fiber": "^8.17.10",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "three": "^0.169.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "esbuild": "0.21.5",
+    "vite": "^5.4.10",
+    "vite-plugin-singlefile": "^2.3.3"
+  },
+  "description": "型格 STYLE LAB —— 男士穿搭实验室：个性化造型推荐 + 3D 换装试衣间 + 穿搭建议引擎 + 全网博主资源库",
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ou-opr/menstyle-lab.git"
+  },
+  "homepage": "https://github.com/ou-opr/menstyle-lab#readme",
+  "bugs": {
+    "url": "https://github.com/ou-opr/menstyle-lab/issues"
+  },
+  "keywords": [
+    "fashion",
+    "outfit-recommendation",
+    "react",
+    "three-js",
+    "3d-try-on",
+    "chinese"
+  ]
+}

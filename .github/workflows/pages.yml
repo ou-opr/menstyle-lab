@@ -1,0 +1,52 @@
+name: pages
+
+# 把站点发布到 GitHub Pages：https://ou-opr.github.io/menstyle-lab/
+# vite 的 base 是 './'（相对路径），hash 路由也不需要服务器重写规则，
+# 所以部署到 /menstyle-lab/ 子路径不用改任何构建配置。
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - run: npm ci
+
+      # 直接调 vite，跳过 prebuild 里的 npm test：
+      # 测试由 CI（verify.yml）单独覆盖，这里只负责产出可部署的 dist/。
+      - name: 构建
+        run: npx vite build
+
+      - name: 构建产物概览
+        run: |
+          echo "dist 合计 $(du -sh dist | cut -f1)"
+          ls -1 dist | head -10
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - id: deployment
+        uses: actions/deploy-pages@v4

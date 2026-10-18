@@ -1,0 +1,195 @@
+name: CI
+
+# 触发：任意分支的 push + 所有 PR + 手动
+# 引号是刻意的：YAML 1.1 解析器（如 PyYAML）会把裸 `on` 读成布尔 true，
+# 加引号后所有解析器都读成字符串 "on"，语义无歧义。
+"on":
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  regression:
+    name: Regression (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      # 必须用 npm ci（package-lock.json 在仓库里），保证与本地锁文件一致、可复现
+      - name: Install
+        run: npm ci
+
+      # 离线回归网共 16 步：lint + validate + 14 个 test-*.mjs。
+      # 全程不联网、不写文件，是唯一应该阻断合并的信号。
+      # lint 已在 npm test 链首位（package.json 的 test 脚本），故无需单独加 lint 步骤。
+      - name: Offline regression suite
+        run: npm test
+
+      # 行覆盖率门禁。只在 Node 22 那一格跑，理由不是「省时间」而是「可复现」：
+      # 实测 Node 20.20.2 与 Node 24.21.0 跑同一份代码得到完全相同的
+      # 4185/10167 = 41.16%，说明本仓库上 V8 版本差异不改变行覆盖率口径。
+      # 反过来说，一旦将来 V8 的 range 归属出现版本差异，两格都跑会让
+      # --min-lines 棘轮变成「随 Node 版本随机红/绿」——固定一格才守得住棘轮。
+      # （Node 20 的兼容性已用真实 v20.20.2 跑通，见交付说明。）
+      - name: Coverage (line coverage gate)
+        if: matrix.node == 22
+        run: |
+          # 不用管道：npm run coverage 的退出码必须原样传给本步骤，
+          # 覆盖率不达标时 CI 必须红。
+          set +e
+          report_file=$(mktemp)
+          npm run coverage > "$report_file" 2>&1
+          status=$?
+          set -e
+
+          # 先把原始报告打到日志（人看被折叠的日志时行为与本地一致）
+          cat "$report_file"
+
+          # 再写 Job Summary，否则覆盖率只活在折叠日志里，等于白测。
+          # 退出码已存进 status，>> 追加不会影响门禁结果。
+          # 注意：这里落的是脚本原样输出的全部内容。文件明细是「覆盖率最低的
+          # TOP_N 个」，不是全部 49 个文件——coverage.mjs 的 TOP_N 是硬编码 10，
+          # 且没有 --json / --all-files 之类的出口。要全量明细得先给它加旗标，
+          # 那不在本工作流可以自行解决的范围内。
+          if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+            {
+              echo "## 行覆盖率（node ${{ matrix.node }}）"
+              echo ""
+              if [ "$status" -eq 0 ]; then
+                echo "**结果：通过** — 阈值 \`--min-lines\` 已满足"
+              else
+                echo "**结果：未达标或执行失败（exit $status）**"
+              fi
+              echo ""
+              echo "<details><summary>完整报告（含覆盖率最低的文件明细）</summary>"
+              echo ""
+              echo '```'
+              cat "$report_file"
+              echo '```'
+              echo ""
+              echo "</details>"
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          exit "$status"
+
+  # 端到端冒烟：走真实浏览器，覆盖「打开 → 换装 → 记日历 → 备份往返 → 移动端导航」。
+  # 为什么单开一个 job：
+  #   · 回归网（上面的 job）全是 Node 里的纯函数断言，37/57 个文件从未被加载，
+  #     其中包含 App.jsx、所有 React 交互、3D 场景、备份恢复 UI、移动端导航——
+  #     「数据层正确」被证明了，「产品能用」没被证明；
+  #   · E2E 需要下载浏览器与起 dev server，比回归网慢一个量级，混在一起会拖慢主链路。
+      # 构建产物断言：防「首屏被提前加载了懒加载资源」这类回归。
+      # 真实踩过：为 three 单独拆 chunk 导致 index.html 注入了 modulepreload，
+      # 首屏 JS 从 203KB 涨到 395KB（gzip），而 three 只在 3D 试衣间需要。
+      # 这类问题从「构建成功」看不出来，只能靠断言。
+      - name: Build + bundle budget
+        if: matrix.node == 22
+        run: |
+          npm run build
+          npm run check:bundle
+
+  e2e:
+    name: E2E smoke (Chromium)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+
+      - name: Install
+        run: npm ci
+
+      # Playwright 自带的 chromium：CI 镜像里没有系统 Chrome，不能用 channel: 'chrome'。
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      # 跑 E2E 并顺带采 UI 层覆盖率：回归网只看得到数据层（38/57 个文件是 UI，
+      # 在那里恒为 0%），这一层才有 App.jsx / components / three 的真实行覆盖率。
+      # 阈值 60%：低于它说明「有测试但没测到关键分支」，而不是「没测试」。
+      - name: Run E2E smoke + UI coverage
+        run: npm run test:e2e:coverage
+
+      # 覆盖率明细写进 Job Summary，否则数字只活在折叠日志里等于白测。
+      - name: UI coverage summary
+        if: always()
+        run: |
+          f=coverage-e2e/summary.json
+          if [ ! -f "$f" ]; then
+            echo "## UI 层覆盖率" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "未生成 summary.json（E2E 提前失败，覆盖率无意义）" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          {
+            echo "## UI 层覆盖率"
+            echo ""
+            node -e "
+              const s = require('./coverage-e2e/summary.json');
+              const mark = s.pass ? '通过' : '**未达标**';
+              console.log('结果：' + mark + '（阈值 ' + s.minLines + '%）');
+              console.log('');
+              console.log('行覆盖率 ' + s.percent.toFixed(2) + '%（' + s.covered + '/' + s.total + ' 行，' + s.fileCount + ' 个文件）');
+              console.log('');
+              console.log('| 文件 | 覆盖 |');
+              console.log('|---|---|');
+              for (const r of s.lowest) console.log('| ' + r.file + ' | ' + r.percent.toFixed(1) + '% (' + r.covered + '/' + r.total + ') |');
+            "
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # 失败时把 trace 与截图传上来，否则只能看到「红」，看不到为什么红。
+      - name: Upload failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+            coverage-e2e/
+          retention-days: 7
+
+  freshness:
+    name: Source freshness (soft gate)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # 「来源链接是否过期」由人工 `npm run check:links` 联网复检来维持，
+      # 它是内容新鲜度指标，不是代码回归指标。纯离线回归网不该因为
+      # 「30 天没联网复检」而变红，所以这里明确降级为软门禁。
+      # 维护者想收紧时：删掉下面的 continue-on-error，这个 job 就会阻断合并。
+      - name: Freshness (non-blocking)
+        run: npm run test:freshness
+        continue-on-error: true
+
+      # 故意不跑 npm run check:links：它要真去请求 187 条外部来源链接，
+      # 在 CI 里又慢又受第三方站点/网络设施影响，不适合当门禁。

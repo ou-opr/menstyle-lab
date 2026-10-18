@@ -1,0 +1,26 @@
+{
+  "cotton": {
+    "polyhaven": "cotton_jersey"
+  },
+  "jersey": {
+    "polyhaven": "jersey_melange"
+  },
+  "oxford": {
+    "polyhaven": "stretch_poplin"
+  },
+  "fleece": {
+    "polyhaven": "polar_fleece"
+  },
+  "woolknit": {
+    "polyhaven": "knitted_fleece"
+  },
+  "twill": {
+    "polyhaven": "terlenka"
+  },
+  "leather": {
+    "polyhaven": "fabric_leather_01"
+  },
+  "denim": {
+    "polyhaven": "denim_fabric_04"
+  }
+}

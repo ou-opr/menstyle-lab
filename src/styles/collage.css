@@ -1,0 +1,132 @@
+/* 多套对比 + 二维拼贴（PHASE3-CONTRACT §2）。
+   只用既有令牌，深浅主题自动生效；颜色一律走变量，不留字面量。 */
+
+/* ---------- 对比表 ---------- */
+.cmp-panel {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+}
+
+.cmp-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cmp-head h4 { margin: 0; font-size: 15px; color: var(--ink); }
+.cmp-hint { font-size: 12.5px; color: var(--ink3); }
+.cmp-empty { margin: 8px 0 0; font-size: 13px; color: var(--ink2); }
+.cmp-note { margin: 10px 0 0; font-size: 12.5px; color: var(--warn); }
+
+.cmp-scroll { margin-top: 10px; overflow-x: auto; }
+
+.cmp-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 420px;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.cmp-table th,
+.cmp-table td {
+  border: 1px solid var(--line);
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.cmp-table thead th { background: var(--th-input-bg); font-weight: 700; }
+.cmp-table thead th.is-active,
+.cmp-table td.is-active { box-shadow: inset 0 0 0 2px var(--accent); }
+.cmp-table tbody th { background: var(--bg2); font-weight: 600; white-space: nowrap; }
+.cmp-table td { font-variant-numeric: tabular-nums; }
+.cmp-table td.is-best { background: var(--accent-soft); color: var(--ink); font-weight: 700; }
+
+.cmp-look-name { display: block; margin-bottom: 4px; }
+.cmp-crown {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--th-on-accent);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.cmp-direction { display: block; margin-top: 2px; font-size: 11.5px; font-weight: 400; color: var(--ink3); }
+
+.cmp-names { margin: 0 0 6px; padding: 0; list-style: none; font-size: 12px; color: var(--ink2); }
+.cmp-names li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+.cmp-names-more { color: var(--ink3); }
+
+.cmp-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.cmp-btn {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--th-input-bg);
+  color: var(--ink2);
+  font-size: 12px;
+  padding: 4px 9px;
+  cursor: pointer;
+}
+.cmp-btn:hover { border-color: var(--accent); color: var(--ink); }
+.cmp-btn-del { color: var(--warn); }
+.cmp-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- 拼贴 ---------- */
+.clg-panel { margin-top: 14px; }
+.clg-head { display: flex; align-items: center; gap: 12px; }
+.clg-head h3 { margin: 0; font-size: 15px; color: var(--ink); }
+.clg-btn {
+  margin-left: auto;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--th-input-bg);
+  color: var(--ink);
+  font-size: 12.5px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+.clg-btn:hover { border-color: var(--accent); }
+.clg-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.clg-status { margin: 6px 0 0; min-height: 16px; font-size: 12.5px; color: var(--ink3); }
+.clg-empty { margin: 8px 0 0; font-size: 13px; color: var(--ink2); }
+.clg-note { margin: 8px 0 0; font-size: 12.5px; color: var(--warn); }
+
+/* 拼贴宽度是按格子算出来的固定像素：窄屏交给容器横向滚动，
+   而不是把格子压扁——压扁会让色块比例失真，看不出真实配色。 */
+.clg-scroll { margin-top: 8px; overflow-x: auto; padding-bottom: 4px; }
+.clg-canvas { position: relative; }
+
+.clg-cell {
+  position: absolute;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  overflow: hidden;
+}
+
+.clg-cell-head { display: flex; align-items: baseline; gap: 8px; }
+.clg-cell-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+.clg-cell-score { margin-left: auto; font-size: 12.5px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+.clg-items { margin: 10px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.clg-items li { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink2); }
+.clg-items li.is-empty { color: var(--ink3); }
+.clg-slot { flex: 0 0 32px; font-size: 11.5px; color: var(--ink3); }
+.clg-swatch {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+  background: var(--bg2);
+}
+.clg-items li.is-empty .clg-swatch { border-style: dashed; background: transparent; }
+.clg-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+@media (max-width: 640px) {
+  .cmp-table { min-width: 360px; }
+  .clg-cells { padding: 0; }
+}

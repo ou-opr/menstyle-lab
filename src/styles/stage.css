@@ -1,0 +1,47 @@
+/* 3D 舞台样式 —— 由 App.jsx 引入（请勿在别处重复引入） */
+/* 颜色纪律：只使用既有 CSS 令牌（--bg/--bg2/--ink/--ink2/--ink3/--line/--card/--accent/--accent-soft/--ok/--warn），
+   不写任何颜色字面量，深色主题由令牌统一切换。 */
+
+/* Canvas 容器：撑满调用方给的 .stage-canvas-host，并保证有最小可见高度 */
+.stage-canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+}
+
+.stage-canvas-wrap canvas { display: block; }
+
+/* 上下文丢失提示层：覆盖在 canvas 之上，居中可见 */
+.stage-gl-lost {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink);
+  background: var(--card);
+  transition: opacity 0.2s ease;
+}
+
+/* 窄屏：舞台高度由 .stage 的下断点控制，这里只保证提示文字与最小高度不挤压画面 */
+@media (max-width: 720px) {
+  .stage-canvas-wrap { min-height: 260px; }
+  .stage-gl-lost { padding: 0 16px; font-size: 12.5px; }
+}
+
+/* 减少动效：本文件内所有过渡/动画一律关闭 */
+@media (prefers-reduced-motion: reduce) {
+  .stage-canvas-wrap,
+  .stage-gl-lost {
+    transition: none !important;
+    animation: none !important;
+  }
+}

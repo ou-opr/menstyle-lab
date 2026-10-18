@@ -1,0 +1,404 @@
+/* 个人衣橱管理器样式。
+   颜色只允许来自 styles.css 的既有令牌（--bg/--bg2/--ink/--ink2/--ink3/--line/--card/
+   --accent/--accent-soft/--ok/--warn）与本文件声明的 --wd-* 令牌，禁止任何颜色字面量，
+   这样 T4 的深色主题重定义令牌后本面板自动跟随。 */
+
+.wd-wrap {
+  --wd-radius: 12px;
+  --wd-radius-sm: 8px;
+  --wd-gap: 12px;
+  --wd-field-border: var(--line);
+  --wd-danger: var(--warn);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.wd-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--wd-radius-sm);
+  background: var(--bg2);
+  color: var(--ink2);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.wd-notice-warn {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
+.wd-notice-more {
+  color: var(--ink3);
+}
+
+.wd-link {
+  margin-left: auto;
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--accent);
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.wd-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wd-stat {
+  padding: 5px 11px;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  background: var(--card);
+  color: var(--ink2);
+  font-size: 12.5px;
+}
+
+.wd-stat b {
+  color: var(--ink);
+}
+
+.wd-stat-hint {
+  color: var(--ink3);
+}
+
+/* ---------------------------------------------------------------- 表单 */
+
+.wd-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wd-gap);
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--wd-radius);
+  background: var(--card);
+}
+
+.wd-form-head {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.wd-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--wd-gap);
+}
+
+.wd-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  font-size: 12.5px;
+  color: var(--ink2);
+}
+
+.wd-field-wide {
+  grid-column: 1 / -1;
+}
+
+.wd-field input,
+.wd-field select,
+.wd-field textarea {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 7px 9px;
+  border: 1px solid var(--wd-field-border);
+  border-radius: var(--wd-radius-sm);
+  background: var(--bg);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+}
+
+.wd-field textarea {
+  resize: vertical;
+}
+
+.wd-field output {
+  align-self: flex-start;
+  color: var(--ink3);
+  font-size: 12px;
+}
+
+.wd-field input[type='range'] {
+  padding: 0;
+  border: 0;
+  background: none;
+  accent-color: var(--accent);
+}
+
+.wd-color-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.wd-color-row input[type='color'] {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 32px;
+  padding: 2px;
+}
+
+.wd-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.wd-hint {
+  color: var(--ink3);
+  font-size: 12px;
+}
+
+.wd-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--wd-radius-sm);
+  background: var(--bg);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.wd-btn:hover {
+  border-color: var(--ink3);
+}
+
+.wd-btn-primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--card);
+}
+
+.wd-btn-danger {
+  border-color: var(--wd-danger);
+  color: var(--wd-danger);
+}
+
+.wd-btn:focus-visible,
+.wd-link:focus-visible,
+.wd-field input:focus-visible,
+.wd-field select:focus-visible,
+.wd-field textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------- 筛选与列表 */
+
+.wd-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--wd-gap);
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--wd-radius);
+  background: var(--bg2);
+}
+
+.wd-count {
+  margin: 0;
+  color: var(--ink3);
+  font-size: 12.5px;
+}
+
+.wd-empty {
+  margin: 0;
+  padding: 20px;
+  border: 1px dashed var(--line);
+  border-radius: var(--wd-radius);
+  color: var(--ink3);
+  font-size: 13px;
+  text-align: center;
+}
+
+.wd-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wd-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--wd-gap);
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--wd-radius);
+  background: var(--card);
+}
+
+.wd-card-main {
+  display: flex;
+  gap: var(--wd-gap);
+  min-width: 0;
+  flex: 1 1 260px;
+}
+
+.wd-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.wd-card-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.wd-swatch {
+  flex: 0 0 14px;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--th-swatch-ring);
+  border-radius: 4px;
+}
+
+.wd-card-meta {
+  margin: 0;
+  color: var(--ink2);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.wd-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+}
+
+.wd-tag {
+  padding: 2px 8px;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  background: var(--bg2);
+  color: var(--ink3);
+  font-size: 11.5px;
+}
+
+.wd-card-notes {
+  margin: 0;
+  color: var(--ink3);
+  font-size: 12.5px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.wd-badge {
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 11.5px;
+  font-weight: 400;
+}
+
+.wd-badge-owned {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.wd-badge-wishlist {
+  background: var(--bg2);
+  color: var(--ink2);
+}
+
+.wd-badge-disliked {
+  background: var(--bg2);
+  color: var(--warn);
+}
+
+.wd-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.wd-confirm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--warn);
+  font-size: 12.5px;
+}
+
+/* ---------------------------------------------------------------- 照片 */
+
+.wd-thumb {
+  flex: 0 0 56px;
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  border-radius: var(--wd-radius-sm);
+  background: var(--bg2);
+}
+
+.wd-thumb-empty,
+.wd-thumb-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink3);
+  font-size: 13px;
+}
+
+.wd-thumb-loading {
+  opacity: 0.6;
+}
+
+.wd-thumb-inline {
+  flex-basis: 40px;
+  width: 40px;
+  height: 40px;
+}
+
+@media (max-width: 640px) {
+  .wd-card {
+    flex-direction: column;
+  }
+
+  .wd-card-actions {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wd-wrap * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

@@ -1,0 +1,247 @@
+/* 资源检索面板（T2）
+   颜色只允许来自 styles.css 既有令牌 + 本文件声明的 --src-* 令牌。
+   深色主题由 Lead 重定义既有令牌实现，这里不得出现任何颜色字面量。 */
+
+.src-panel {
+  --src-radius: 14px;
+  --src-radius-sm: 99px;
+  --src-chip-bg: var(--card);
+  --src-chip-line: var(--line);
+  --src-chip-ink: var(--ink2);
+  --src-on-bg: var(--ink);
+  --src-on-ink: var(--bg);
+  margin-bottom: 20px;
+}
+
+/* ---------- 检索工具条 ---------- */
+.src-toolbar {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px 18px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--src-radius);
+}
+
+.src-search { flex: 1 1 320px; min-width: 0; }
+.src-sort { flex: 0 0 auto; }
+
+.src-field-label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: .5px;
+  color: var(--ink3);
+  margin-bottom: 6px;
+}
+
+.src-input-wrap { position: relative; display: flex; align-items: center; }
+
+.src-input {
+  width: 100%;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 9px 12px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.src-input::placeholder { color: var(--ink3); }
+.src-input:hover { border-color: var(--ink3); }
+.src-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.src-input-clear {
+  position: absolute;
+  right: 6px;
+  border: 0;
+  background: var(--bg2);
+  color: var(--ink2);
+  font-size: 11.5px;
+  border-radius: 8px;
+  padding: 4px 9px;
+}
+.src-input-clear:hover { color: var(--ink); }
+
+.src-select {
+  font-family: inherit;
+  font-size: 13.5px;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 9px 12px;
+}
+.src-select:hover { border-color: var(--ink3); }
+.src-select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.src-statusbar {
+  flex: 1 1 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  border-top: 1px dashed var(--line);
+  padding-top: 10px;
+  font-size: 12.5px;
+  color: var(--ink2);
+}
+.src-status { color: var(--ink); font-weight: 600; }
+.src-pending { color: var(--ink3); font-weight: 400; }
+.src-total { color: var(--ink3); }
+
+.src-reset {
+  margin-left: auto;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink2);
+  border-radius: var(--src-radius-sm);
+  padding: 5px 14px;
+  font-size: 12.5px;
+  transition: all .15s;
+}
+.src-reset:hover { border-color: var(--accent); color: var(--accent); }
+.src-reset:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.src-reset-lg { margin-left: 0; padding: 9px 20px; font-size: 13.5px; }
+
+/* ---------- 筛选分组 ---------- */
+.src-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 14px 18px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--src-radius);
+}
+
+.src-group { border: 0; min-width: 0; }
+.src-legend {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: .5px;
+  color: var(--ink3);
+  padding: 0 0 6px;
+}
+.src-legend-n { font-size: 10.5px; color: var(--ink3); }
+
+.src-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+
+.src-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--src-chip-line);
+  background: var(--src-chip-bg);
+  color: var(--src-chip-ink);
+  border-radius: var(--src-radius-sm);
+  padding: 5px 12px;
+  font-size: 12.5px;
+  transition: all .15s;
+}
+.src-chip:hover { border-color: var(--ink3); color: var(--ink); }
+.src-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.src-chip[aria-pressed='true'] {
+  background: var(--src-on-bg);
+  border-color: var(--src-on-bg);
+  color: var(--src-on-ink);
+}
+.src-chip-n { font-size: 10.5px; opacity: .7; font-variant-numeric: tabular-nums; }
+
+.src-dot { width: 9px; height: 9px; border-radius: 3px; display: inline-block; }
+
+.src-chip-more { border-style: dashed; color: var(--ink3); }
+
+/* ---------- 空态 ---------- */
+.src-empty {
+  margin-top: 16px;
+  padding: 44px 24px;
+  text-align: center;
+  background: var(--card);
+  border: 1px dashed var(--line);
+  border-radius: var(--src-radius);
+}
+.src-empty-title { font-size: 16px; color: var(--ink); font-weight: 600; }
+.src-empty-sub { margin: 6px 0 16px; font-size: 13px; color: var(--ink2); }
+
+/* ---------- 分页 ---------- */
+.src-pager {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.src-page {
+  min-width: 38px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink2);
+  border-radius: 10px;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  transition: all .15s;
+}
+.src-page:hover:not(:disabled) { border-color: var(--ink3); color: var(--ink); }
+.src-page:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.src-page[aria-current='page'] {
+  background: var(--src-on-bg);
+  border-color: var(--src-on-bg);
+  color: var(--src-on-ink);
+  font-weight: 700;
+}
+.src-page:disabled { opacity: .45; cursor: not-allowed; }
+.src-page-edge { min-width: 0; }
+
+.src-gap { color: var(--ink3); padding: 0 2px; }
+.src-page-info { margin-left: auto; font-size: 12.5px; color: var(--ink3); }
+
+/* ---------- 视觉隐藏（仅供读屏） ---------- */
+.src-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 1080px) {
+  .src-toolbar { gap: 12px; padding: 14px; }
+  .src-search { flex: 1 1 100%; }
+  .src-sort { flex: 1 1 auto; }
+  .src-select { width: 100%; }
+
+  /* 4 组筛选收成一行横向滚动，避免挤出首屏 */
+  .src-filters {
+    flex-direction: row;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .src-group { flex: 0 0 auto; max-width: 100%; }
+  .src-chips { flex-wrap: wrap; max-width: 100%; }
+}
+
+@media (max-width: 640px) {
+  .src-toolbar { padding: 13px 12px; }
+  .src-filters { flex-direction: column; overflow-x: visible; padding: 13px 12px; }
+  .src-group { flex: 1 1 auto; }
+  .src-empty { padding: 34px 16px; }
+  .src-page-info { margin-left: 0; flex-basis: 100%; }
+  .src-reset { margin-left: 0; }
+}

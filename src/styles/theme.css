@@ -1,0 +1,54 @@
+/* ============================================================================
+   ThemeToggle 样式 + T4 主题级通用增强（所有者：T4 主题与体验）
+   ----------------------------------------------------------------------------
+   颜色纪律：只用 styles.css 里的既有令牌，以及 --th-* 前缀令牌（已在
+   :root / :root[data-theme='dark'] / prefers-contrast 三处随主题重定义）。
+   本文件不出现任何颜色字面量。
+   ============================================================================ */
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  background: var(--bg2);
+}
+
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 99px;
+  background: transparent;
+  color: var(--ink2);
+  font-size: 12.5px;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
+}
+
+.theme-toggle-btn:hover { color: var(--ink); }
+
+/* 当前档位：实心底 + 反色文字，与 .tool-btn.on / .tab.on 同一套语义 */
+.theme-toggle-btn.on {
+  background: var(--th-strong-bg);
+  color: var(--th-on-strong);
+}
+
+/* 深色下实心底是浅色，焦点环改用其文字色才可见 */
+.theme-toggle-btn.on:focus-visible { outline-color: var(--th-on-strong); outline-offset: 3px; }
+
+@media (pointer: coarse) {
+  .theme-toggle-btn { min-width: 44px; min-height: 44px; }
+}
+
+/* 动效偏好：本组件的过渡同样关掉（styles.css 的全局规则已覆盖，
+   此处显式声明以免将来本文件被单独引用时失效） */
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle-btn { transition: none; }
+}

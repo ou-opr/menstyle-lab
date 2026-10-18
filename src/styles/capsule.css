@@ -1,0 +1,209 @@
+/* 胶囊衣橱 · 样式（只使用契约令牌与 --th-* 主题令牌） */
+
+.cap {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.cap-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+  align-items: start;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.cap-field { border: 0; margin: 0; padding: 0; min-width: 0; }
+
+.cap-field legend,
+.cap-label { font-size: 12.5px; color: var(--ink2); margin-bottom: 6px; }
+.cap-field legend { padding: 0; }
+
+.cap-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.cap-chip {
+  border: 1px solid var(--line);
+  background: var(--th-input-bg);
+  color: var(--ink2);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+  min-height: 32px;
+}
+
+.cap-chip:hover { border-color: var(--accent); color: var(--ink); }
+
+.cap-chip.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--th-on-accent, var(--card));
+  font-weight: 600;
+}
+
+/* 目标件数那一栏里塞了滑块、数值和按钮三样东西：滑块独占一行，
+   数值与按钮再各占一格。用 flex 换行而不是让它们挤在一行——否则窄列上
+   按钮会压到「16 件」上面（1264px 下就已经压住了）。 */
+.cap-field:last-child { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.cap-field:last-child .cap-label { flex: 1 1 100%; margin-bottom: 0; }
+
+.cap-range { flex: 1 1 140px; min-width: 0; accent-color: var(--accent); }
+
+.cap-target {
+  display: inline-block;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.cap-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+
+.cap-stat {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  text-align: center;
+  background: var(--th-card-on, var(--bg2));
+}
+
+.cap-stat b { display: block; font-size: 20px; color: var(--accent); font-variant-numeric: tabular-nums; }
+.cap-stat span { font-size: 11.5px; color: var(--ink3); }
+
+.cap-h3 { margin: 4px 0 0; font-size: 15px; color: var(--ink); }
+.cap-h4 { margin: 0 0 6px; font-size: 13px; color: var(--ink2); }
+
+.cap-dim { margin: 4px 0 0; font-size: 12px; line-height: 1.6; color: var(--ink3); }
+
+.cap-note { margin: 0; font-size: 12.5px; line-height: 1.6; color: var(--ink2); }
+.cap-note.warn { color: var(--warn); }
+.cap-note.ok { color: var(--ok); }
+
+.cap-slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.cap-slot {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  min-width: 0;
+}
+
+.cap-items { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+
+.cap-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 4px 8px;
+  font-size: 12.5px;
+  color: var(--ink);
+}
+
+.cap-item i,
+.cap-miss-head i {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid var(--th-swatch-ring, var(--line));
+}
+
+.cap-name { min-width: 0; }
+.cap-item .cap-reason { grid-column: 2 / -1; }
+
+.cap-badge {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 1px 7px;
+  font-size: 11px;
+  color: var(--ink3);
+  white-space: nowrap;
+}
+
+.cap-cov {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.cap-reason { margin: 2px 0 0; font-size: 12px; line-height: 1.55; color: var(--ink3); }
+
+.cap-gaps {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.cap-gaps caption { text-align: left; padding: 8px 12px 4px; }
+.cap-gaps th,
+.cap-gaps td { padding: 7px 12px; text-align: left; border-bottom: 1px solid var(--line); }
+.cap-gaps thead th { color: var(--ink3); font-weight: 600; font-size: 11.5px; }
+.cap-gaps tbody th { color: var(--ink2); font-weight: 500; }
+.cap-gaps td { color: var(--ink); font-variant-numeric: tabular-nums; }
+.cap-gaps tr:last-child th,
+.cap-gaps tr:last-child td { border-bottom: 0; }
+.cap-gaps tr.urgent th,
+.cap-gaps tr.urgent td { color: var(--warn); }
+
+.cap-missing { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+
+.cap-miss {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.cap-miss-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; color: var(--ink); }
+.cap-miss-head b { font-weight: 600; }
+.cap-miss-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+.cap-btn {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--th-on-accent, var(--card));
+  border-radius: 8px;
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 32px;
+}
+
+.cap-btn.ghost { background: transparent; color: var(--accent); }
+.cap-btn:disabled { opacity: .55; cursor: not-allowed; }
+
+.cap-chip:focus-visible,
+.cap-range:focus-visible,
+.cap-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 900px) {
+  .cap-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cap-item { grid-template-columns: auto 1fr auto; }
+  .cap-item .cap-cov { grid-column: 3; }
+}
+
+@media (max-width: 420px) {
+  .cap-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

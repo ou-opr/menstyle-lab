@@ -1,0 +1,142 @@
+/* 阶段一装配层的布局胶水（PHASE1-CONTRACT §7）。
+   只负责"把四个已完成的模块摆到页面上"，不含任何组件内部样式——
+   那些各自在自己的样式文件里（wardrobe.css / preferences.css / data-manager.css）。
+
+   颜色纪律：只用 styles.css 既有令牌 + 本文件声明的 --po-* 前缀变量，不写颜色字面量。
+   深色主题因此自动跟随（令牌在 [data-theme='dark'] 下被统一切换）。 */
+
+:root {
+  --po-gap: 18px;
+}
+
+/* 「我的衣橱」：左侧衣橱管理器（宽）+ 右侧偏好面板（窄）。 */
+.po-wardrobe {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: var(--po-gap);
+  align-items: start;
+}
+
+/* 网格项必须能收缩，否则内部的长单品名/长 URL 会撑破列宽 */
+.po-wardrobe > * { min-width: 0; }
+
+.po-wardrobe .wd-card-name,
+.po-wardrobe .wd-card-notes,
+.po-wardrobe .pref-tag-name {
+  overflow-wrap: anywhere;
+}
+
+/* 智能替换：放在 3D 网格之后，占满整行 */
+.po-replace-wrap { margin-top: var(--po-gap); }
+
+/* 数据管理：页脚前的独立区块，与 .section 同宽 */
+.po-data-wrap { max-width: 1280px; margin: 0 auto; }
+
+/* 个人单品提示条：复用 .stage-tools 已有的视觉语言，不引入新颜色 */
+.po-note {
+  margin-top: 10px;
+  padding: 9px 13px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--ink2);
+  font-size: 12.5px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.po-note b { color: var(--ink); }
+
+/* 推荐卡新增的个人化信息条（契约 §5 的 ownedRatio / missing / personalScore） */
+.po-owned {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin-top: 9px;
+  font-size: 11.5px;
+  color: var(--ink2);
+}
+
+.po-owned-meter {
+  position: relative;
+  flex: 1 1 90px;
+  min-width: 70px;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.po-owned-meter > i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+
+.po-owned b { color: var(--ink); }
+
+.po-missing {
+  margin-top: 6px;
+  font-size: 11.5px;
+  color: var(--ink2);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.po-missing b { color: var(--warn); font-weight: 700; }
+
+/* 推荐卡上的快捷反馈（与 PreferencePanel 共用同一份 store，契约 §4） */
+.po-feedback {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.po-feedback button {
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink2);
+  border-radius: 99px;
+  padding: 5px 11px;
+  font-size: 11.5px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+
+.po-feedback button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.po-feedback button[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.po-feedback-note {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--ink3);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+/* 窄屏：衣橱与偏好转为单列 */
+@media (max-width: 1080px) {
+  .po-wardrobe { grid-template-columns: 1fr; }
+}
+
+/* 触摸设备：推荐卡上的快捷反馈按钮也要有 44px 命中区（与 styles.css 的规则一致） */
+@media (pointer: coarse) {
+  .po-feedback button { min-height: 44px; display: inline-flex; align-items: center; }
+}
+
+/* 减少动效：本文件内所有过渡一律关闭 */
+@media (prefers-reduced-motion: reduce) {
+  .po-feedback button { transition: none; }
+}

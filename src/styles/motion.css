@@ -1,0 +1,306 @@
+/* ============================================================================
+   动效层（在 styles.css 之后加载，可覆盖组件默认过渡）
+   ----------------------------------------------------------------------------
+   纪律：
+   · 颜色一律走令牌，本文件不出现颜色字面量（mask-image 除外，且仍用令牌）。
+   · 只动 transform / opacity，避免触发重排。
+   · 所有动效在 prefers-reduced-motion: reduce 下退化为静态。
+   · 不改变键盘焦点顺序、不接管滚动。
+   ============================================================================ */
+
+:root {
+  --dur-fast: 160ms;
+  --dur-base: 220ms;
+  --dur-slow: 320ms;
+  --dur-hero: 420ms;
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --reveal-y: 16px;
+  --reveal-stagger: 40ms;
+}
+
+/* ---------------------------------------------------------------- 顶部导航 */
+/* 阅读进度条：App 的 useNavScroll 把 0–1 写进 --scroll-progress（不触发重渲染）。 */
+.nav::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(var(--scroll-progress, 0));
+  transform-origin: 0 50%;
+  transition: transform 90ms linear;
+  pointer-events: none;
+}
+.nav.is-compact {
+  box-shadow: 0 8px 22px var(--th-shadow-sm);
+}
+.nav-links a,
+.theme-toggle-btn,
+.tool-btn,
+.tab,
+.preset-btn,
+.src-tab,
+.sug .apply,
+.generate-btn,
+.try-look,
+.chip .x {
+  transition-duration: var(--dur-fast);
+  transition-timing-function: ease-out;
+}
+
+/* ---------------------------------------------------------------- 首屏标题 */
+/* 每段文字各自套一层溢出遮罩，上浮时像被“拉”出来；两段间隔 70ms。 */
+.hero-line {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+.hero-line-inner {
+  display: inline-block;
+  transform: translateY(112%);
+  animation: hero-line-rise var(--dur-hero) var(--ease-out) forwards;
+}
+.hero-line:nth-of-type(2) .hero-line-inner {
+  animation-delay: 70ms;
+}
+.hero p.sub,
+.hero-stats {
+  animation: hero-fade var(--dur-slow) var(--ease-out) both;
+}
+.hero p.sub { animation-delay: 120ms; }
+.hero-stats { animation-delay: 200ms; }
+.hero-stat b { font-variant-numeric: tabular-nums; }
+
+@keyframes hero-line-rise {
+  to { transform: translateY(0); }
+}
+@keyframes hero-fade {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ------------------------------------------------------------ 滚动入场揭示 */
+/* 由 useScrollReveal 统一加 .is-revealed；html 未挂 .motion-ready 时内容始终可见，
+   因此脚本失败 / 被禁用也不会把正文锁在透明态。 */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(var(--reveal-y));
+  transition:
+    opacity var(--dur-slow) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+  transition-delay: calc(var(--reveal-i, 0) * var(--reveal-stagger));
+}
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+}
+html:not(.motion-ready) [data-reveal] {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+/* ------------------------------------------------------------ 卡片悬停层次 */
+.law,
+.src-card,
+.recommendation-card,
+.advice-card {
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    border-color var(--dur-fast) ease-out;
+}
+.law:hover,
+.src-card:hover,
+.recommendation-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px var(--th-shadow-md);
+}
+.law:hover,
+.src-card:hover,
+.recommendation-card:hover,
+.advice-card:hover {
+  border-color: var(--ink3);
+}
+.law:active,
+.src-card:active,
+.recommendation-card:active {
+  transform: translateY(-1px);
+}
+.advice-card:hover {
+  box-shadow: 0 8px 20px var(--th-shadow-sm);
+}
+.generate-btn:hover,
+.try-look:hover {
+  transform: translateY(-2px);
+}
+.generate-btn:active,
+.try-look:active,
+.tool-btn:active,
+.preset-btn:active,
+.src-tab:active,
+.sug .apply:active {
+  transform: translateY(0) scale(0.985);
+}
+
+/* -------------------------------------------------------------- 3D 舞台入场 */
+.stage {
+  animation: stage-rise var(--dur-slow) var(--ease-out) both;
+}
+@keyframes stage-rise {
+  from { opacity: 0; transform: translateY(12px) scale(0.99); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------------------------------------------------------------- 法则字带 */
+/* 文案全部来自 LAWS，纯展示（aria-hidden），不新增任何宣称。 */
+.law-band {
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--bg2);
+  padding: var(--sp-3) 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, var(--ink) 6%, var(--ink) 94%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, var(--ink) 6%, var(--ink) 94%, transparent 100%);
+}
+.law-band-track {
+  display: flex;
+  width: max-content;
+  animation: law-band-drift 56s linear infinite;
+}
+.law-band:hover .law-band-track,
+.law-band:focus-within .law-band-track {
+  animation-play-state: paused;
+}
+.law-band-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  margin-right: var(--sp-6);
+  font-family: var(--serif);
+  font-size: var(--fs-1);
+  color: var(--ink2);
+  white-space: nowrap;
+}
+.law-band-item b {
+  color: var(--accent);
+  font-size: var(--fs-0);
+  letter-spacing: 1px;
+}
+.law-band-item i {
+  color: var(--line);
+  font-style: normal;
+}
+@keyframes law-band-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+/* ------------------------------------------------------------ 桌面章节进度轨 */
+.chapter-rail { display: none; }
+@media (min-width: 1600px) {
+  .chapter-rail {
+    position: fixed;
+    right: var(--sp-5);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-left: var(--sp-3);
+    border-left: 1px solid var(--line);
+  }
+  .chapter-rail a {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-1) var(--sp-2);
+    border-radius: 6px;
+    color: var(--ink3);
+    font-size: var(--fs-0);
+    transition: color var(--dur-fast) ease-out, transform var(--dur-fast) ease-out;
+  }
+  .chapter-rail a:hover {
+    color: var(--ink);
+    transform: translateX(-2px);
+  }
+  .chapter-rail .rail-no {
+    font-family: var(--serif);
+    letter-spacing: 1px;
+  }
+  .chapter-rail .rail-name {
+    max-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 0;
+    transition:
+      max-width var(--dur-base) var(--ease-out),
+      opacity var(--dur-fast) linear;
+  }
+  .chapter-rail a:hover .rail-name,
+  .chapter-rail a:focus-visible .rail-name,
+  .chapter-rail a[aria-current='true'] .rail-name {
+    max-width: 76px;
+    opacity: 1;
+  }
+  .chapter-rail a[aria-current='true'] {
+    color: var(--accent);
+    font-weight: 700;
+  }
+}
+
+/* ------------------------------------------------------------ 主题切换过渡 */
+/* ThemeToggle 在支持的浏览器里用 document.startViewTransition 包住主题写入。 */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-slow);
+  animation-timing-function: var(--ease-out);
+}
+::view-transition-old(root) { animation-name: theme-fade-out; }
+::view-transition-new(root) { animation-name: theme-fade-in; }
+@keyframes theme-fade-out { to { opacity: 0; } }
+@keyframes theme-fade-in { from { opacity: 0; } }
+
+/* ------------------------------------------------------------ 减少动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .hero-line-inner,
+  .hero p.sub,
+  .hero-stats,
+  .stage {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .law-band-track { animation: none !important; }
+  .law:hover,
+  .src-card:hover,
+  .recommendation-card:hover,
+  .generate-btn:hover,
+  .try-look:hover,
+  .law:active,
+  .src-card:active,
+  .recommendation-card:active,
+  .generate-btn:active,
+  .try-look:active,
+  .tool-btn:active,
+  .preset-btn:active,
+  .src-tab:active,
+  .sug .apply:active,
+  .chapter-rail a:hover {
+    transform: none !important;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}

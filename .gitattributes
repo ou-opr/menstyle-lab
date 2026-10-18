@@ -1,0 +1,10 @@
+# 换行符归一：本仓库在 Windows 上开发，全局 core.autocrlf=true。
+# git hook 与 CI 脚本必须保持 LF，否则在部分 Unix 环境下
+# sh 会把 CRLF 的 shebang 读成 #!/bin/sh\r 并报 bad interpreter。
+.githooks/*        text eol=lf
+.github/**        text eol=lf
+*.sh              text eol=lf
+
+# Windows 批处理文件保持 CRLF（Git for Windows 的 cmd 对 LF 兼容性差）
+*.cmd             text eol=crlf
+*.bat             text eol=crlf

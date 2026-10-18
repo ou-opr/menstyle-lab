@@ -1,0 +1,30 @@
+# 依赖（约 261 MB，可由 npm ci 重建）
+node_modules/
+
+# 构建产物（可由 npm run build / npm run build:single 重建）
+dist/
+dist-single/
+
+# 外部审查工具的运行状态，不属于源码
+.mimosa/
+
+# Python 字节码缓存（scripts/build-font-subset.py 运行后产生）
+__pycache__/
+
+# 编辑器与系统噪音
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+
+# Playwright 产物（每次运行重建）
+test-results/
+playwright-report/
+blob-report/
+
+
+# E2E 覆盖率原始数据（每次运行重建，体积可达几十 MB）
+coverage-e2e/
+

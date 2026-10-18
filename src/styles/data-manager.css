@@ -1,0 +1,257 @@
+/* 数据管理面板（T3）
+   颜色纪律：只用 styles.css 里的既有令牌，以及本文件声明的 --dm-* 令牌。
+   深色主题由 Lead 重定义既有令牌实现，因此这里不得出现任何颜色字面量。 */
+
+.dm {
+  --dm-radius: 14px;
+  --dm-radius-sm: 10px;
+  --dm-gap: 12px;
+  --dm-radius-pill: 99px;
+  --dm-danger-ink: var(--warn);
+  --dm-danger-line: var(--warn);
+  --dm-ok-ink: var(--ok);
+  --dm-quiet-bg: var(--bg);
+  --dm-on-strong: var(--th-on-strong, var(--bg));
+  display: flex;
+  flex-direction: column;
+  gap: var(--dm-gap);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 20px 22px;
+}
+
+/* ---------- 头部 ---------- */
+.dm-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--line);
+}
+.dm-head h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.dm-sub { font-size: 12px; color: var(--ink3); }
+
+.dm-banner {
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--warn);
+  border-radius: var(--dm-radius-sm);
+  background: var(--th-warn-soft, var(--bg2));
+  color: var(--warn);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+/* ---------- 区块 ---------- */
+.dm-block {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 14px 16px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--dm-radius);
+}
+.dm-block-danger { border-style: dashed; }
+
+.dm-block-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.dm-block-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--ink2);
+}
+
+/* ---------- 按钮 ---------- */
+.dm-btn {
+  margin-left: auto;
+  font-family: inherit;
+  font-size: 12.5px;
+  border-radius: var(--dm-radius-pill);
+  padding: 7px 16px;
+  border: 1px solid var(--line);
+  background: var(--dm-quiet-bg);
+  color: var(--ink2);
+  transition: border-color .15s, color .15s, background .15s;
+}
+.dm-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.dm-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dm-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+/* 主操作：实心，与 .tool-btn.on / .theme-toggle-btn.on 同一套语义 */
+.dm-btn-primary {
+  background: var(--th-strong-bg, var(--ink));
+  border-color: var(--th-strong-bg, var(--ink));
+  color: var(--dm-on-strong);
+  font-weight: 600;
+}
+.dm-btn-primary:hover:not(:disabled) {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--th-on-accent, var(--bg));
+}
+
+/* 危险操作（二次确认后）：反色告警 */
+.dm-btn-danger {
+  background: var(--warn);
+  border-color: var(--warn);
+  color: var(--bg);
+  font-weight: 700;
+}
+.dm-btn-quiet { background: transparent; }
+
+/* ---------- 本地数据概览 ---------- */
+.dm-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink2);
+}
+.dm-counts b {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.dm-note {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--ink3);
+}
+
+/* ---------- 冲突策略 ---------- */
+.dm-fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.dm-legend {
+  padding: 0 0 6px;
+  font-size: 11px;
+  letter-spacing: .5px;
+  color: var(--ink3);
+}
+.dm-modes { display: flex; gap: 7px; flex-wrap: wrap; }
+
+.dm-mode {
+  font-family: inherit;
+  font-size: 12.5px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink2);
+  border-radius: var(--dm-radius-pill);
+  padding: 6px 15px;
+  transition: all .15s;
+}
+.dm-mode:hover { border-color: var(--accent); color: var(--accent); }
+.dm-mode:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dm-mode.is-on {
+  background: var(--th-strong-bg, var(--ink));
+  border-color: var(--th-strong-bg, var(--ink));
+  color: var(--dm-on-strong);
+  font-weight: 700;
+}
+
+/* ---------- 文件选择 ---------- */
+.dm-file-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.dm-file {
+  flex: 1 1 260px;
+  min-width: 0;
+  font-family: inherit;
+  font-size: 12.5px;
+  color: var(--ink2);
+  background: var(--card);
+  border: 1px dashed var(--line);
+  border-radius: var(--dm-radius-sm);
+  padding: 9px 12px;
+}
+.dm-file:hover:not(:disabled) { border-color: var(--ink3); }
+.dm-file:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.dm-file:disabled { opacity: .5; }
+.dm-file::file-selector-button {
+  font-family: inherit;
+  font-size: 12.5px;
+  margin-right: 12px;
+  border: 1px solid var(--line);
+  background: var(--bg2);
+  color: var(--ink);
+  border-radius: var(--dm-radius-pill);
+  padding: 5px 13px;
+  cursor: pointer;
+}
+
+/* ---------- 导入预演 ---------- */
+.dm-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  background: var(--accent-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--dm-radius-sm);
+}
+.dm-preview-title {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.dm-preview-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--ink2);
+}
+.dm-preview-warn {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--warn);
+}
+.dm-preview .dm-btn { margin-left: 0; align-self: flex-start; }
+
+/* ---------- 状态行 ---------- */
+.dm-status {
+  margin: 0;
+  min-height: 19px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ink3);
+}
+.dm-status.is-ok { color: var(--dm-ok-ink); font-weight: 600; }
+.dm-status.is-warn { color: var(--warn); }
+.dm-status.is-error { color: var(--dm-danger-ink); font-weight: 600; }
+
+.dm-status-lines {
+  margin: 4px 0 0;
+  padding-left: 18px;
+  font-weight: 400;
+  color: var(--ink2);
+  font-size: 12px;
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 640px) {
+  .dm { padding: 16px 14px; border-radius: var(--dm-radius); }
+  .dm-block { padding: 12px 13px; }
+  .dm-btn { margin-left: 0; }
+  .dm-block-head { flex-direction: column; align-items: stretch; }
+  .dm-file { flex: 1 1 100%; }
+  .dm-preview { padding: 11px 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dm-btn, .dm-mode { transition: none; }
+}
