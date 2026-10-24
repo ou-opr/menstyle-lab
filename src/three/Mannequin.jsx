@@ -202,7 +202,9 @@ export function Studio({ outfit, autoRotate = false, profile, active = true }) {
         role="img"
         aria-label={canvasLabel}
         dpr={[1, 2]}
-        shadows
+        // three 0.186 移除了 PCFSoftShadowMap，R3F 的布尔 props 仍会去设它并触发警告。
+        // "percentage" 对应 PCFShadowMap；柔化交给 light 的 shadow-radius。
+        shadows="percentage"
         // 非「可见 + 自动旋转」时走 demand：没有 invalidate 就一帧都不画。
         frameloop={frameloop}
         camera={{ position: [0.85, 1.5, 3.85], fov: 33 }}
@@ -215,6 +217,7 @@ export function Studio({ outfit, autoRotate = false, profile, active = true }) {
           intensity={1.45}
           castShadow
           shadow-mapSize={[1024, 1024]}
+          shadow-radius={3}
           shadow-bias={-0.0005}
           shadow-normalBias={0.02}
           shadow-camera-left={-0.6}

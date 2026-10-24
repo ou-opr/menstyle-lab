@@ -1,4 +1,4 @@
-// E2E 冒烟：5 条走真实浏览器的关键路径。
+// E2E 冒烟：主流程关键路径（打开 / 换装 / 记日历 / 备份 / 导出 / 移动端 / 收藏 / 色彩实验室）。
 //
 // 每条用例的立场：只要它失败，就说明**用户主流程断了**；不测视觉细节。
 // 用例之间会清空 localStorage，所以必须顺序执行（playwright.config.js 已设 workers: 1）。
@@ -58,9 +58,9 @@ async function scrollToSection(page, id) {
 
 test.describe('主流程冒烟', () => {
   // ── 1. 打开：页面结构与关键区域都在，且 3D 场景能加载出来 ──
-  test('1. 打开页面：10 个章节齐全，3D 场景能渲染出 canvas', async ({ page }) => {
-    // 十个锚点必须都在（导航与章节共用同一份 CHAPTERS）
-    for (const id of ['planner', 'wardrobe', 'today', 'calendar', 'capsule', 'studio', 'advice', 'laws', 'sources', 'data']) {
+  test('1. 打开页面：11 个章节齐全，3D 场景能渲染出 canvas', async ({ page }) => {
+    // 十一个锚点必须都在（导航与章节共用同一份 CHAPTERS）
+    for (const id of ['planner', 'wardrobe', 'today', 'calendar', 'capsule', 'studio', 'color', 'advice', 'laws', 'sources', 'data']) {
       await expect(page.locator(`#${id}`)).toHaveCount(1)
     }
     await expect(page.locator('h1')).toContainText('穿得好看')
@@ -271,7 +271,7 @@ test.describe('主流程冒烟', () => {
     }))
     expect(overflow.scrollW).toBeLessThanOrEqual(overflow.clientW + 2)
 
-    // 导航条在窄屏下必须可横向滚动（10 个链接放不下）
+    // 导航条在窄屏下必须可横向滚动（11 个链接放不下）
     const navScrollable = await page.evaluate(() => {
       const links = document.querySelector('.nav-links')
       if (!links) return null
@@ -358,5 +358,66 @@ test.describe('主流程冒烟', () => {
 
     // 计数回显
     await expect(page.locator('.share-looks-count')).toContainText('2')
+  })
+
+  // ── 9. 色彩实验室：照片只在本机取色，并生成可试穿的方案 ──
+  // 这条用例同时守住三个承诺：
+  //   ① 上传的图片真的被解码并量化成主色（不是写死的示例色）；
+  //   ② 照片不会上传/落盘（localStorage 里不能出现文件名或 data URL）；
+  //   ③ 生成方案能回填到 3D 试衣间（点「试穿」后造型 chips 确实变化）。
+  test('9. 色彩实验室：上传照片取色、生成方案并可试穿', async ({ page }) => {
+    await scrollToSection(page, 'color')
+    await expect(page.locator('#color .cl-steps')).toBeVisible()
+
+    // 用浏览器自己画一张硬边三色图再上传：不引入二进制 fixture，
+    // 也避免手写 base64 在不同环境下失真。
+    const dataUrl = await page.evaluate(() => {
+      const canvas = document.createElement('canvas')
+      canvas.width = 180
+      canvas.height = 120
+      const ctx = canvas.getContext('2d')
+      ctx.fillStyle = '#f1efe8'
+      ctx.fillRect(0, 0, 180, 120)
+      ctx.fillStyle = '#3d4d66'
+      ctx.fillRect(0, 0, 60, 120)
+      ctx.fillStyle = '#6a452c'
+      ctx.fillRect(60, 0, 50, 120)
+      ctx.fillStyle = '#c9ccd1'
+      ctx.fillRect(110, 40, 40, 40)
+      return canvas.toDataURL('image/png')
+    })
+    const buffer = Buffer.from(dataUrl.split(',')[1], 'base64')
+    await page.locator('#color input[type=file]').setInputFiles({
+      name: 'e2e-palette.png',
+      mimeType: 'image/png',
+      buffer,
+    })
+
+    await expect(page.locator('#color .cl-diagnosis')).toBeVisible({ timeout: 20000 })
+    await expect(page.locator('#color .cl-status')).toContainText('照片没有离开你的浏览器')
+
+    // 四个色块应原样回来，不出现量化伪色；色值都是合法 #rrggbb。
+    await expect(page.locator('#color .cl-palette li')).toHaveCount(4)
+    const hexes = await page.locator('#color .cl-color-hex').allInnerTexts()
+    expect(hexes.every((hex) => /^#[0-9a-f]{6}$/.test(hex)), `非法色值：${hexes.join(',')}`).toBe(true)
+    await expect(page.locator('#color .cl-tags')).toContainText('符合三色原则')
+    await expect(page.locator('#color .cl-outfit')).toHaveCount(3)
+    expect(await page.locator('#color .cl-match-btn').count()).toBeGreaterThan(0)
+
+    // 照片不落盘：localStorage 任何值里都不应出现文件名或图片数据。
+    const persisted = await page.evaluate(() => Object.values(window.localStorage).join('\n'))
+    expect(persisted).not.toContain('e2e-palette.png')
+    expect(persisted).not.toContain('data:image')
+
+    // 试穿：点击第一套方案后，3D 造型 chips 必须至少有一项变化。
+    const chipsBefore = await page.locator('#studio .outfit-now .chip').allInnerTexts()
+    await page.locator('#color .cl-try').first().click()
+    await expect
+      .poll(async () => page.evaluate(() => window.scrollY), { timeout: 10000 })
+      .toBeGreaterThan(500)
+    const chipsAfter = await page.locator('#studio .outfit-now .chip').allInnerTexts()
+    const changed = chipsAfter.length !== chipsBefore.length
+      || chipsAfter.some((chip, index) => chip !== chipsBefore[index])
+    expect(changed, '点击试穿后造型应当发生变化').toBe(true)
   })
 })

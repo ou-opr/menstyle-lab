@@ -1,7 +1,7 @@
 {
   "name": "menstyle-lab",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -16,6 +16,7 @@
     "test:capsule": "node scripts/test-capsule.mjs",
     "test:bodyprofile": "node scripts/test-bodyprofile.mjs",
     "test:collage": "node scripts/test-collage.mjs",
+    "test:colorlab": "node scripts/test-colorlab.mjs",
     "test:e2e": "playwright test",
     "test:e2e:desktop": "playwright test --project=desktop",
     "test:e2e:mobile": "playwright test --project=mobile",
@@ -35,7 +36,7 @@
     "coverage:self-test": "node scripts/coverage.mjs --self-test",
     "hooks:install": "node scripts/install-hooks.mjs",
     "hooks:uninstall": "node scripts/install-hooks.mjs --uninstall",
-    "test": "npm run lint && npm run lint:self-test && npm run coverage:ui:self-test && npm run check:bundle:self-test && npm run validate && npm run test:engine && npm run test:wardrobe && npm run test:preferences && npm run test:backup && npm run test:backup2 && npm run test:daily && npm run test:calendar && npm run test:capsule && npm run test:bodyprofile && npm run test:looks && npm run test:outfitshape && npm run test:share && npm run test:sources && npm run test:collage",
+    "test": "npm run lint && npm run lint:self-test && npm run coverage:ui:self-test && npm run check:bundle:self-test && npm run validate && npm run test:engine && npm run test:wardrobe && npm run test:preferences && npm run test:backup && npm run test:backup2 && npm run test:daily && npm run test:calendar && npm run test:capsule && npm run test:bodyprofile && npm run test:looks && npm run test:outfitshape && npm run test:share && npm run test:sources && npm run test:collage && npm run test:colorlab",
     "check:bundle": "node scripts/check-bundle.mjs",
     "check:bundle:self-test": "node scripts/check-bundle.mjs --self-test",
     "docs": "node scripts/generate-docs.mjs",

@@ -1,19 +1,19 @@
 # 维护手册 · MAINTENANCE
 
-> **基线：v1.2.0（2026-10-24）**。仓库历史从 v1.0.0 提交起算，之前的开发期迭代已按发布需要重置。
+> **基线：v1.3.0（2026-10-25）**。仓库历史从 v1.0.0 提交起算，之前的开发期迭代已按发布需要重置。
 > 本文档说明「日常改什么、跑什么门禁、怎么发版、什么需要定期看」。
 
 ## 一、基线数字
 
-| 项 | v1.2.0 |
+| 项 | v1.3.0 |
 |---|---|
 | 提交 | 1 个（`型格 STYLE LAB 1.0.0`）+ 后续维护提交 |
-| 跟踪文件 | 182 |
-| `.git` | 3.8 MB |
+| 跟踪文件 | 187 |
+| `.git` | 4.0 MB |
 | 依赖 | React 19.3 · Three 0.186 · fiber 9 · drei 10 · Vite 7.3 · Playwright 1.64 |
-| 门禁 | `npm test` 20 余项 + E2E 冒烟层（desktop / mobile） |
-| 首屏 JS | 195 KB（预算断言守住，超了直接失败；懒加载 3D chunk 另计 271 KB） |
-| UI 层行覆盖率 | 70.29% |
+| 门禁 | `npm test` 20 步 + E2E 冒烟层（9 条 × desktop / mobile） |
+| 首屏 JS | 204 KB（预算断言守住，超了直接失败；懒加载 3D chunk 另计 271 KB） |
+| UI 层行覆盖率 | 71.99% |
 | 线上 | https://ou-opr.github.io/menstyle-lab/ |
 
 ## 二、日常改动：改哪里 → 跑什么
@@ -22,6 +22,7 @@
 |---|---|---|
 | UI 组件 / 交互 | `src/components/`、`src/app/` | `npm test`（含 lint 与覆盖率） |
 | 造型引擎 / 打分规则 | `src/data/advice.js`、`personalRecommendations.js`、`conflicts.js` | `npm test`（硬冲突口径三处必须一致） |
+| 色彩实验室 / 取色诊断 | `src/data/colorLab.js`、`src/components/ColorLab.jsx`、`src/styles/colorlab.css` | `npm test`（含 `test:colorlab`）+ `npm run test:e2e` |
 | 单品目录 | `src/data/catalog.js` + `scripts/validate.mjs` 的断言 | `npm run validate` + `npm test` |
 | 博主资源库 | `src/data/sources.js`（HTML 由 `test-sources.mjs` 用真实 SSR 断言） | `npm run test:sources` |
 | 样式 | `src/styles/` | `npm test`（含 CSS 令牌与硬编码颜色检查） |
@@ -29,12 +30,13 @@
 
 **改完至少跑 `npm test`**。它依次跑：lint → lint 自检 → 覆盖率自检 → 产物预算自检 →
 数据校验 → 引擎 → 衣橱 → 偏好 → 备份 v1 → 备份 v2 → 日历 → 胶囊 → 体型 → 收藏 → 造型形状 →
-分享 → 资源库 → 拼图。
+分享 → 资源库 → 拼图 → 色彩实验室。
 
 单项速查：
 
 ```bash
 npm run test:engine      # 造型引擎语义
+npm run test:colorlab    # 取色 / 诊断 / 色差匹配 / 同色造型
 npm run test:sources     # 资源库（真实 SSR 渲染断言）
 npm run check:bundle     # 产物预算（首屏体积）
 npm run coverage:ui      # UI 层真实行覆盖率
@@ -51,12 +53,12 @@ npm run build            # 产物 dist/
 npm run build:single     # 单文件版 dist-single/（可直接双击）
 
 # 4) 提交 + 打 tag + 推送
-git add -A && git commit -m "release: v1.1.0"
-git tag -a v1.1.0 -m "style lab 1.1.0"
+git add -A && git commit -m "release: v1.3.0"
+git tag -a v1.3.0 -m "style lab 1.3.0"
 git push origin main --follow-tags
 
 # 5) 建 Release
-gh release create v1.1.0 --title "1.1.0" --notes-file notes.md --verify-tag
+gh release create v1.3.0 --title "1.3.0" --notes-file notes.md --verify-tag
 ```
 
 - **pre-push 钩子会自动跑一遍 `npm test`**（装了 hooks 才有，见 `npm run hooks:install`）。内容没变只改文档时可 `--no-verify` 跳过。

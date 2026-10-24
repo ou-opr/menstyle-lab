@@ -9,6 +9,7 @@ import { ProfileRecommender, DEFAULT_PROFILE } from './components/ProfileRecomme
 import ScoreCard from './components/ScoreCard'
 import { ShareBar } from './components/ShareBar'
 import { OutfitCollage } from './components/OutfitCollage'
+import { ColorLab } from './components/ColorLab'
 import { ThemeToggle } from './components/ThemeToggle'
 import { ChapterRail } from './components/ChapterRail'
 import { CountUp } from './components/CountUp'
@@ -39,7 +40,7 @@ import './styles/stage.css'
 
 const DEFAULT_OUTFIT = PRESETS[0].outfit
 
-// 顶部导航对应的 10 个稳定锚点区块；改这里的顺序即改变高亮优先级与观察顺序。
+// 顶部导航对应的 11 个稳定锚点区块；改这里的顺序即改变高亮优先级与观察顺序。
 // 章节进度轨复用同一份编号与标签，避免两处文案漂移。
 const CHAPTERS = [
   { id: 'planner', no: '01', label: '个人方案' },
@@ -48,10 +49,11 @@ const CHAPTERS = [
   { id: 'calendar', no: '04', label: '穿搭日历' },
   { id: 'capsule', no: '05', label: '胶囊衣橱' },
   { id: 'studio', no: '06', label: '3D 试衣间' },
-  { id: 'advice', no: '07', label: '穿搭建议' },
-  { id: 'laws', no: '08', label: '穿搭法则' },
-  { id: 'sources', no: '09', label: '博主资源' },
-  { id: 'data', no: '10', label: '数据管理' },
+  { id: 'color', no: '07', label: '色彩实验室' },
+  { id: 'advice', no: '08', label: '穿搭建议' },
+  { id: 'laws', no: '09', label: '穿搭法则' },
+  { id: 'sources', no: '10', label: '博主资源' },
+  { id: 'data', no: '11', label: '数据管理' },
 ]
 const SECTION_IDS = CHAPTERS.map((chapter) => chapter.id)
 
@@ -165,7 +167,7 @@ export default function App() {
   }, [hashNotice])
 
   // 顶部导航增强：移动端横滑渐隐提示 + 当前区块高亮。
-  // 高亮用 IntersectionObserver 观察 10 个 section 驱动；滚动结束点未必触发 IO 回调，
+  // 高亮用 IntersectionObserver 观察 11 个 section 驱动；滚动结束点未必触发 IO 回调，
   // 因此另挂一个 rAF 节流的 scroll 监听做最终校正，两者共用同一个 applyCurrent。
   useEffect(() => {
     const navLinks = navLinksRef.current
@@ -343,6 +345,7 @@ export default function App() {
             <a href="#calendar">穿搭日历</a>
             <a href="#capsule">胶囊衣橱</a>
             <a href="#studio">3D 试衣间</a>
+            <a href="#color">色彩实验室</a>
             <a href="#advice">穿搭建议</a>
             <a href="#laws">穿搭法则</a>
             <a href="#sources">博主资源</a>
@@ -534,17 +537,27 @@ export default function App() {
           />
         </section>
 
+        <section className="section" id="color">
+          <div className="sec-head" data-reveal>
+            <span className="no">07</span><h2>色彩实验室</h2>
+            <span className="desc">上传一张照片 · 提取主色并诊断配色 · 从目录里生成同色系造型直接试穿</span>
+          </div>
+          <div data-reveal style={{ '--reveal-i': 1 }}>
+            <ColorLab outfit={outfit} onTry={tryRecommendedLook} />
+          </div>
+        </section>
+
         <section className="section" id="advice" style={{ background: 'var(--bg2)', maxWidth: '100%' }}>
           <div data-reveal style={{ maxWidth: 1280, margin: '0 auto' }}>
             <div className="sec-head">
-              <span className="no">07</span><h2>穿搭建议</h2>
+              <span className="no">08</span><h2>穿搭建议</h2>
               <span className="desc">随你身上的搭配实时变化 · 点击"试试这件"直接上身</span>
             </div>
             <AdvicePanel outfit={outfit} setOutfit={setOutfit} />
           </div>
         </section>
 
-        {/* 法则字带：内容全部取自 LAWS，纯展示（aria-hidden），作为 08 区块的引子。 */}
+        {/* 法则字带：内容全部取自 LAWS，纯展示（aria-hidden），作为 09 区块的引子。 */}
         <div className="law-band" aria-hidden="true">
           <div className="law-band-track">
             {[...LAWS, ...LAWS].map((law, index) => (
@@ -557,7 +570,7 @@ export default function App() {
 
         <section className="section" id="laws">
           <div className="sec-head" data-reveal>
-            <span className="no">08</span><h2>穿搭法则</h2>
+            <span className="no">09</span><h2>穿搭法则</h2>
             <span className="desc">从博主视频里提炼的 {PROJECT_STATS.laws} 条通用原则，每条附原始出处</span>
           </div>
           <Laws />
@@ -566,7 +579,7 @@ export default function App() {
         <section className="section" id="sources" style={{ background: 'var(--bg2)', maxWidth: '100%' }}>
           <div data-reveal style={{ maxWidth: 1280, margin: '0 auto' }}>
             <div className="sec-head">
-              <span className="no">09</span><h2>博主资源库</h2>
+              <span className="no">10</span><h2>博主资源库</h2>
               <span className="desc">点击任意卡片跳转到原视频/帖子 · 持续更新</span>
             </div>
             <Sources />
@@ -576,7 +589,7 @@ export default function App() {
         {/* 契约 §7：数据管理器位于页脚之前，负责备份 / 恢复 / 重置 */}
         <section className="section po-data-wrap" id="data">
           <div className="sec-head" data-reveal>
-            <span className="no">10</span><h2>数据管理</h2>
+            <span className="no">11</span><h2>数据管理</h2>
             <span className="desc">导出备份包 · 导入恢复 · 一键重置 · 照片与反馈都在里面</span>
           </div>
           <div data-reveal style={{ '--reveal-i': 1 }}>
