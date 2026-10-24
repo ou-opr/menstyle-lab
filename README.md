@@ -97,15 +97,15 @@ npm run hooks:uninstall   # 卸载
 > （副作用导入，保证初始化顺序），Vite 见到静态 import 就注入 `modulepreload`——
 > **首屏一下多了 192KB（gzip）395KB vs 203KB**，而 three 只在滚到 3D 试衣间时才需要。
 > 首屏体积是每个访客每次都要付的钱，缓存收益只影响回访——这笔账算反了。
-> 现在只拆 `react-vendor`，three 全留在懒加载 chunk 里：**首屏 2 个 js / 201KB**，
-> 进 3D 才拉 Mannequin 210KB。
+> 现在只拆 `react-vendor`，three 全留在懒加载 chunk 里：**首屏 2 个 js / 195KB**，
+> 进 3D 才拉 Mannequin 271KB。
 
 **实测对照**（preview 构建，`performance.getEntriesByType('resource')`）：
 
 | 方案 | 首屏 JS | 进 3D 后额外 |
 |---|---|---|
 | 拆 three-core / fiber / drei | 5 个文件 / **395KB**（含 three-core 173KB） | 0（已预载） |
-| 只拆 react-vendor（当前） | 2 个文件 / **201KB** | 210KB（Mannequin） |
+| 只拆 react-vendor（当前） | 2 个文件 / **195KB** | 271KB（Mannequin） |
 
 ## 覆盖率的两条线（各管一半，别只看一个数）
 
@@ -172,7 +172,7 @@ npm run hooks:uninstall   # 卸载
 
 ## 技术栈
 
-React 18 · Vite 7 · Three.js 0.169 · @react-three/fiber 8 · @react-three/drei 9
+React 19 · Vite 7 · Three.js 0.186 · @react-three/fiber 9 · @react-three/drei 10
 （3D 模特与全部服装网格均为程序化建模，无外部模型资源，可离线运行）
 
 ## 目录结构

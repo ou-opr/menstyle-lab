@@ -1,7 +1,23 @@
 # 更新日志 · CHANGELOG
 
 口径：按 [SemVer](https://semver.org/lang/zh-CN/) 记录「面向使用者的变化」，不逐条罗列重构。
-**当前发布点 `v1.1.0`**；首个发布周期 2026-10-16 → 2026-10-18。
+**当前发布点 `v1.2.0`**；首个发布周期 2026-10-16 → 2026-10-18。
+
+## [1.2.0] — 2026-10-24
+
+依赖升级第二步：React / Three 生态整体上一个代际（维护手册 §五 的遗留项就此清零）。
+
+### 变更
+- React 18.3 → **19.3**、`@react-three/fiber` 8 → 9、`@react-three/drei` 9 → 10、three 0.169 → **0.186**。
+- 首屏 JS 201KB → **195KB**（gzip）——React 19 运行时更小，预算 ≤260KB 断言继续通过。
+- 懒加载 3D chunk 210KB → **271KB**（gzip）：drei 10 的依赖面更大。它只在进 3D 试衣间时下载，
+  不占首屏预算；首屏访问者完全不受影响。
+
+### 验证
+- `npm test` exit 0；`check:bundle` / `build:single` / E2E 冒烟 16/16 / UI 覆盖率门禁全部通过。
+- 浏览器控制台冒烟（打开页面 + 懒加载 3D + 换装）0 error / 0 warning，无 React 19 deprecation 提示。
+- `src/` 源码**零改动**即兼容：`Canvas` / `useThree` / `OrbitControls` / `ContactShadows` /
+  `RoundedBox` / `RoomEnvironment` 均为新版保留 API。
 
 ## [1.1.0] — 2026-10-24
 

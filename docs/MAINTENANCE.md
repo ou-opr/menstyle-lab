@@ -1,18 +1,18 @@
 # 维护手册 · MAINTENANCE
 
-> **基线：v1.1.0（2026-10-24）**。仓库历史从 v1.0.0 提交起算，之前的开发期迭代已按发布需要重置。
+> **基线：v1.2.0（2026-10-24）**。仓库历史从 v1.0.0 提交起算，之前的开发期迭代已按发布需要重置。
 > 本文档说明「日常改什么、跑什么门禁、怎么发版、什么需要定期看」。
 
 ## 一、基线数字
 
-| 项 | v1.1.0 |
+| 项 | v1.2.0 |
 |---|---|
 | 提交 | 1 个（`型格 STYLE LAB 1.0.0`）+ 后续维护提交 |
 | 跟踪文件 | 182 |
 | `.git` | 3.8 MB |
-| 依赖 | React 18.3.1 · Three 0.169 · Vite 7.3 · Playwright 1.64 |
+| 依赖 | React 19.3 · Three 0.186 · fiber 9 · drei 10 · Vite 7.3 · Playwright 1.64 |
 | 门禁 | `npm test` 20 余项 + E2E 冒烟层（desktop / mobile） |
-| 首屏 JS | 201 KB（预算断言守住，超了直接失败） |
+| 首屏 JS | 195 KB（预算断言守住，超了直接失败；懒加载 3D chunk 另计 271 KB） |
 | UI 层行覆盖率 | 70.29% |
 | 线上 | https://ou-opr.github.io/menstyle-lab/ |
 
@@ -78,11 +78,12 @@ gh release create v1.1.0 --title "1.1.0" --notes-file notes.md --verify-tag
 - **~~安全漏洞剩 2 个~~ 已在 v1.1.0 修复**：原来是 `esbuild <= 0.24.2` 的开发服务器漏洞
   （1 moderate + 1 high，经 vite 5.4 传递引入，只影响本地 dev server、不影响产物与线上站点）。
   v1.1.0 升级 vite 5.4 → 7.3（esbuild 0.28）后 `npm audit` 清零。
-- **依赖仍落后一个大版本（第二步，尚未做）**：React 18 → 19、three 0.169 → 0.186、
-  fiber 8 → 9、drei 9 → 10。vite 生态这步（vite 7 / plugin-react 5 / singlefile / esbuild 0.28）
-  已在 v1.1.0 完成；React 这步动静更大（fiber 9 + drei 10 是配套大版本），
-  单独一个周期做，改完必须重跑 `npm test` + `npm run check:bundle` + E2E。
-  候选路径：`@vitejs/plugin-react` 5 已声明支持 vite ^8，届时可一并升 vite 8。
+- **~~依赖落后一个大版本~~ 已在 v1.1.0 + v1.2.0 完成**：vite 生态（vite 7 / plugin-react 5 /
+  esbuild 0.28 / singlefile）在 v1.1.0，React 19 + fiber 9 + drei 10 + three 0.186 在 v1.2.0
+  （`src/` 零改动兼容）。剩余候选：vite 8（plugin-react 5 已声明支持；其 React 插件 6 才需要
+  rolldown 生态，届时单独评估）。
+- **懒加载 3D chunk 变大（271KB gzip）**：drei 10 的依赖面比 9 大，已如实记录在 CHANGELOG。
+  它不进首屏预算；若未来想压回去，可评估从 drei 换成手写 OrbitControls 包装（有真实需求再做）。
 - **`reports/` 入库**（23 个文件 / 约 2MB）：是评审对比图，作为证据保留。
 - **`node_modules` / `dist` / `coverage-e2e` 不入库**：`coverage-e2e` 在磁盘上可达 262MB，可随时删（每次 E2E 重建）。
 - **备份**：`D:\穿搭\_backup\menstyle-lab-history-*.bundle`（4.3MB）是重置前的完整历史。
