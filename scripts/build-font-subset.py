@@ -44,6 +44,7 @@ import io
 import json
 import os
 import subprocess
+from pathlib import Path
 import sys
 import unicodedata
 
@@ -177,9 +178,9 @@ def build(text, weights, src_font):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--font", default=DEFAULT_FONT)
-    ap.add_argument("--out", default=OUT)
+    # 不提供 --out：产物路径固定为模块常量 OUT（仓库内），不给 CLI 留任意写文件的入口。
     ap.add_argument("--check-only", action="store_true")
-    ap.add_argument("--source-charset", action="store_true", help="按源码字符集裁（不启动浏览器）")
+    ap.add_argument("--source-charset", action="store_true", help="按源码字符集裁字符（不启动浏览器）")
     ap.add_argument("--url", default="http://localhost:5173/", help="收集渲染字符时访问的地址")
     args = ap.parse_args()
 
@@ -218,16 +219,17 @@ def main():
         print(f"[font] check-only: OK（合计 {total:,} B）")
         return 0
 
-    os.makedirs(os.path.dirname(args.out), exist_ok=True)
+    # 产物路径是仓库常量目录下的固定文件名，全程不出允许目录，也不给 CLI 任意写文件的入口。
+    out_dir = Path(REPO, "src", "assets", "fonts")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / "noto-serif-sc-subset.woff2"
+    bold_out = out_dir / "noto-serif-sc-subset-700.woff2"
     regular = built[TARGET_WEIGHTS[0]]
     bold = built[TARGET_WEIGHTS[-1]]
-    with open(args.out, "wb") as fh:
-        fh.write(regular)
-    bold_out = args.out.replace(".woff2", "-700.woff2")
-    with open(bold_out, "wb") as fh:
-        fh.write(bold)
-    print(f"[font] 写出 {os.path.basename(args.out)}  ({len(regular):,} B)")
-    print(f"[font] 写出 {os.path.basename(bold_out)}  ({len(bold):,} B)")
+    out_path.write_bytes(regular)
+    bold_out.write_bytes(bold)
+    print(f"[font] 写出 {out_path.name}  ({len(regular):,} B)")
+    print(f"[font] 写出 {bold_out.name}  ({len(bold):,} B)")
     print(f"[font] 合计 {total:,} B（base64 ≈ {total * 4 // 3:,} B）")
     return 0
 

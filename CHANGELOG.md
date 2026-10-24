@@ -1,7 +1,25 @@
 # 更新日志 · CHANGELOG
 
 口径：按 [SemVer](https://semver.org/lang/zh-CN/) 记录「面向使用者的变化」，不逐条罗列重构。
-**当前发布点 `v1.0.0`**；开发周期 2026-10-16 → 2026-10-18。
+**当前发布点 `v1.1.0`**；首个发布周期 2026-10-16 → 2026-10-18。
+
+## [1.1.0] — 2026-10-24
+
+工具链升级轮：按维护手册「先升 vite 生态 → 再升 React」的既定路线完成第一步。
+
+### 变更
+- **vite 生态升级**：vite 5.4 → 7.3、`@vitejs/plugin-react` 4 → 5、直接依赖 esbuild 0.21 → 0.28、
+  `vite-plugin-singlefile` 2.3.3 → 2.3.4。React / Three 运行时版本未动，产物行为不变。
+- **安全通告清零**：`npm audit` 从 2 条（esbuild dev server 漏洞，1 high + 1 moderate，
+  只影响本地开发服务器、不影响产物与线上站点）降到 0 条。
+
+### 性能
+- 首屏 JS 203KB → **201KB**（gzip，预算 ≤260KB 断言继续通过）；懒加载 Mannequin 206KB → 210KB。
+
+### 验证
+- `npm test`（离线 16 步）exit 0；`check:bundle`、`build:single` 通过；
+  E2E 冒烟 16/16（desktop + mobile）；UI 覆盖率门禁（≥60%）通过。
+- React 19 / fiber 9 / drei 10 / three 0.186 仍按计划留作第二步，见 `docs/MAINTENANCE.md` §五。
 
 ## [1.0.0] — 2026-10-18
 

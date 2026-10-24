@@ -1,7 +1,7 @@
 {
   "name": "menstyle-lab",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -56,10 +56,10 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",
-    "@vitejs/plugin-react": "^4.3.4",
-    "esbuild": "0.21.5",
-    "vite": "^5.4.10",
-    "vite-plugin-singlefile": "^2.3.3"
+    "@vitejs/plugin-react": "^5.2.0",
+    "esbuild": "^0.28.2",
+    "vite": "^7.3.7",
+    "vite-plugin-singlefile": "^2.3.4"
   },
   "description": "型格 STYLE LAB —— 男士穿搭实验室：个性化造型推荐 + 3D 换装试衣间 + 穿搭建议引擎 + 全网博主资源库",
   "license": "SEE LICENSE IN LICENSE",

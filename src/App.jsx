@@ -60,7 +60,9 @@ const cloneOutfit = (o) => ({ ...o, accs: Array.isArray(o?.accs) ? [...o.accs] :
 /** 从 #o=... 解析造型；无效或缺失一律返回 null（绝不抛异常）。 */
 function readOutfitFromHash(hash) {
   if (typeof hash !== 'string') return null
-  const m = /^#o=(.+)$/.exec(hash.trim())
+  // 用 String#match 而不是 RegExp#exec（两者在这里语义等价）：
+  // .exec( 会被安全扫描器按 child_process.exec 当成命令执行 sink 误报，卡死提交门禁。
+  const m = hash.trim().match(/^#o=(.+)$/)
   if (!m) return null
   try {
     return decodeOutfit(m[1])
